@@ -47,11 +47,16 @@ class Register extends Component{
     
     onSubmit = data =>{
         data.preventDefault()
-        let reader = new FileReader()
-        reader.readAsDataURL(this.state.pictures[0])
-        reader.onloadend = () =>{
-            console.log(reader.result)
+        if(this.state.pictures.length > 0){
+            let reader = new FileReader()
+            reader.readAsDataURL(this.state.pictures[0])
+            reader.onloadend = () =>{
+                if(!(this.errors.contraseña.length > 0))
+                console.log(reader.result)
+            }
         }
+        else alert("Suba una imagen antes")
+        
         console.log(this.state)
     }
 
@@ -84,6 +89,7 @@ class Register extends Component{
                                         <div className="form-group">
                                             {this.errors.contraseña.length > 0 && <span className="alert alert-danger">{this.errors.contraseña}</span>}
                                         </div>
+                                        
                                         <div className="form-group">
                                             <ImageUploader
                                                 singleImage={true}
@@ -95,6 +101,7 @@ class Register extends Component{
                                                 maxFileSize={5242880}
                                             />
                                         </div>
+                                       
                                         
                                     </div>
                                 </div>

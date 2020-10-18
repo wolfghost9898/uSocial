@@ -3,7 +3,7 @@ const { login, register }    = require('../controllers/auth.controller')
 const router = Router()
 
 router.get('/login',login)
-router.get('/register',register)
+router.post('/register',register)
 
 
 
