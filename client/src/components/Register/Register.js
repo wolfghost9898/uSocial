@@ -2,6 +2,10 @@ import React,{Component} from 'react';
 import ImageUploader from 'react-images-upload';
 import '../../../node_modules/bootstrap/dist/css/bootstrap.min.css';
 import './style.css'
+import {url} from '../../config'
+import axios from 'axios';
+import Swal from 'sweetalert2'
+
 
 class Register extends Component{
 
@@ -35,8 +39,8 @@ class Register extends Component{
         let {id,value} = e.target
         if(id === 'nombre') this.setState({ nombre : value })
         else if(id === 'usuario') this.setState({ usuario : value })
-        else if(id === 'contraseña') {
-            errors.contraseña = (value !== this.state.contraseñaC) ? 'Las contraseñas no coinciden' : ''
+        else if(id === 'contraseña' ) {
+            if(this.state.contraseñaC.length > 0) errors.contraseña = (value !== this.state.contraseñaC) ? 'Las contraseñas no coinciden' : ''
             this.setState({ contraseña : value })
         }
         else if(id === 'contraseñaC') {
@@ -51,13 +55,59 @@ class Register extends Component{
             let reader = new FileReader()
             reader.readAsDataURL(this.state.pictures[0])
             reader.onloadend = () =>{
-                if(!(this.errors.contraseña.length > 0))
-                console.log(reader.result)
+                if(!(this.errors.contraseña.length > 0)){
+                    
+                    let usuario = {
+                        nombre : this.state.nombre,
+                        usuario : this.state.usuario,
+                        contra: this.state.contraseña,
+                        imagen: reader.result
+                        
+                    }
+                    console.log(usuario)
+                    axios.post(url.api + 'api/auth/register', { usuario })
+                    .then(res => {
+                        console.log(res);
+                        console.log(res.data);
+                        if(res.data.status === 400){
+                            Swal.fire({
+                                title: 'Error!',
+                                text: res.data.msg,
+                                icon: 'error',
+                            })
+                            return;
+                        }
+                        Swal.fire({
+                            title:'Usuario creado con exito',
+                            icon: 'success'
+                        })
+
+                        this.setState = {
+                            nombre : '',
+                            usuario : '',
+                            contraseña : '',
+                            contraseñaC : '',
+                            pictures:[],
+                            errors:{
+                                contraseña : ''
+                            }
+                
+                        }
+                        return;
+                    }).catch(error =>{
+                        console.log(error.response)
+                        Swal.fire({
+                            title: 'Error!',
+                            text: 'Ha ocurrido un error:(',
+                            icon: 'error',
+                        })
+                    })
+                }
+               
             }
         }
         else alert("Suba una imagen antes")
         
-        console.log(this.state)
     }
 
     render(){
@@ -71,7 +121,7 @@ class Register extends Component{
                                     <h4>Register Form</h4>
                                 </div>
                             </div>
-                            <form onSubmit={this.onSubmit}>
+                            <form onSubmit={this.onSubmit} id="formulario">
                                 <div className="row">
                                     <div className="col-md-12">
                                         <div className="form-group">
