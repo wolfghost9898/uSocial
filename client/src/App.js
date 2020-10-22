@@ -4,6 +4,7 @@ import { BrowserRouter as Router, Route, Link, BrowserRouter, Redirect, Switch }
 
 import Login from './components/Login/Login'
 import Register from './components/Register/Register'
+import Inicio from './components/Inicio/Inicio'
 
 class App extends Component {
   render() {
@@ -20,6 +21,11 @@ class App extends Component {
               exact
               path="/login"
               component={Login}
+            />
+            <Route
+              exact
+              path="/inicio"
+              component={Inicio}
             />
           </Switch>
         </div>

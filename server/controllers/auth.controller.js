@@ -8,11 +8,51 @@ const crypto = require('crypto')
 
 const conitoIdentity = new AWS.CognitoIdentityServiceProvider({region:config.userPoolRegion})
 
+const login = async(req,res) =>{
+    let {usuario, contra} = req.body.usuario
+    console.log(req.body.usuario)
+    try{
+        const user = await userModel.findOne({usuario: usuario})
+        
+        if(!user){
+            return res.send({
+                status: 400,
+                msg : "Usuario incorrecto"
+            })
+        }
 
-const login = async (req, res) => {
-    res.send("Hola Login")
+        const contraseñaValida = Bcrypt.compareSync(contra, user.contraseña);
+        if (!contraseñaValida) {
+            return res.send({
+                status: 400,
+                msg : "Contraseña incorrecta"
+            })
+        }
+
+        //const token = generateJWT(user.id, user.usuario);
+
+        /*res.status(200).json({
+            ok: true,
+            uid: user.id,
+            name: user.usuario,
+            token
+        });*/
+
+        return res.send({
+            status: 200,
+            id: user.id,
+            name: user.usuario,
+            message: "Usuario valido"
+        })
+
+    }catch (e) {
+        console.log(e);
+        return res.send({
+            status: 500,
+            msg : e
+        })
+    }
 }
-
 
 const register = async (req, res) => {
     AWS.config.update(config.aws_remote_config)
@@ -95,9 +135,9 @@ const register = async (req, res) => {
         })
         
     })
-    
-   
 }
+
+
 
 function generateHash(username,secretHash,clientId){
     return crypto.createHmac('SHA256', secretHash)
