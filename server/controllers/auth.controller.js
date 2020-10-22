@@ -1,8 +1,11 @@
 const AWS = require('aws-sdk');
 const config = require('../config')
 const dateTime = require('node-datetime');
-const usuarioModel = require('../models/user.model'); 
 const userModel = require('../models/user.model');
+
+const Bcrypt = require("bcryptjs");
+
+
 
 const login = async(req,res) =>{
     res.send("Hola Login")
@@ -21,7 +24,7 @@ const register = async(req,res) =>{
     let newUser = userModel({
         nombre : nombre,
         usuario : usuario,
-        contraseña : contra,
+        contraseña : Bcrypt.hashSync(contra,10),
         imagen: config.buckerURL + "user/" + identificador + ".png"
     })
     
