@@ -12,6 +12,7 @@ class Auth{
 
 
     sesionIniciada(){
+        console.log(localStorage.getItem("nombre") === null)
         return !(localStorage.getItem("nombre") === null)
     }
 
