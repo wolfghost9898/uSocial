@@ -10,7 +10,7 @@ const conitoIdentity = new AWS.CognitoIdentityServiceProvider({region:config.use
 
 const login = async(req,res) =>{
     let {usuario, contra} = req.body.usuario
-    console.log(req.body.usuario)
+    //console.log(req.body.usuario)
     try{
         const user = await userModel.findOne({usuario: usuario})
         
@@ -41,7 +41,7 @@ const login = async(req,res) =>{
         return res.send({
             status: 200,
             usuario: user.usuario,
-            name: user.usuario,
+            name: user.nombre,
             imagen: user.imagen,
             message: "Usuario valido"
         })

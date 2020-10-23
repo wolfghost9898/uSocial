@@ -5,6 +5,7 @@ import { BrowserRouter as Router, Route, Link, BrowserRouter, Redirect, Switch }
 import Login from './components/Login/Login'
 import Register from './components/Register/Register'
 import Inicio from './components/Inicio/Inicio'
+import Chat from './components/Chat/Chat'
 import GuardRoute from './Guards/GuardRoute'
 import Auth from './services/Auth'
 
@@ -32,6 +33,12 @@ class App extends Component {
               exact
               path="/login"
               component={Login}
+            />
+
+            <Route
+              exact
+              path="/chat"
+              component={Chat}
             />
             
             

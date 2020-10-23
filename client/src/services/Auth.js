@@ -12,9 +12,13 @@ class Auth{
 
 
     sesionIniciada(){
-        console.log(localStorage.getItem("nombre") === null)
         return !(localStorage.getItem("nombre") === null)
     }
+
+    obtenerInformacion(){
+        return {usuario:localStorage.getItem('usuario'),nombre: localStorage.getItem('nombre'),image: localStorage.getItem('imagen')}
+    }
+
 
     cerrarSesion(){
         localStorage.clear();
