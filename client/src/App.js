@@ -8,7 +8,7 @@ import Inicio from './components/Inicio/Inicio'
 import Chat from './components/Chat/Chat'
 import GuardRoute from './Guards/GuardRoute'
 import Auth from './services/Auth'
-
+import Solicitudes from './components/Solicitudes/Solicitudes'
 
 class App extends Component {
 
@@ -35,10 +35,16 @@ class App extends Component {
               component={Login}
             />
 
-            <Route
+            <GuardRoute
               exact
               path="/chat"
-              component={Chat}
+              component={Chat} auth={this.auth.sesionIniciada()}
+            />
+
+            <GuardRoute
+              exact
+              path="/solicitudes"
+              component={Solicitudes} auth={this.auth.sesionIniciada()}
             />
             
             

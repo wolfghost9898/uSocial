@@ -47,7 +47,24 @@ const solicitud = async(req,res) =>{
     })
 }
 
+const getSolicitudes = async(req,res) =>{
+    let {usuario} = req.params  
+    
+    solicitudModel.find({receptor:usuario},(err,data) =>{
+        if(err){
+            return res.send({
+                status: 400,
+                msg: err
+            })
+        }
+        return res.send({
+            status: 200,
+            msg:data
+        })
+    })
+}
 
 module.exports = {
-    solicitud
+    solicitud,
+    getSolicitudes
 }
