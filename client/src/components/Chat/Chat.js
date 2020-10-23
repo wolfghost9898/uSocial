@@ -80,7 +80,7 @@ class Chat extends Component{
                             <Link className="nav-link" to="/Solicitudes">Solicitudes de Amistad</Link>
                         </li>
                         <li className="nav-item">
-                            <a className="nav-link" onClick={this.enviarSolicitud} href="">Enviar Solicitud</a>
+                            <a className="nav-link" onClick={this.enviarSolicitud} href="#">Enviar Solicitud</a>
                         </li>
                         <li className="nav-item">
                             <a className="nav-link" onClick={this.cerrarSesion} >Salir</a>
