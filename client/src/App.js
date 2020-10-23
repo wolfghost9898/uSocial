@@ -12,6 +12,7 @@ class App extends Component {
       <BrowserRouter>
         <div>
           <Switch>
+            <Route exact path="/" component={Inicio}/>
             <Route
               exact
               path="/register"
@@ -22,11 +23,9 @@ class App extends Component {
               path="/login"
               component={Login}
             />
-            <Route
-              exact
-              path="/inicio"
-              component={Inicio}
-            />
+            
+            
+            
           </Switch>
         </div>
       </BrowserRouter>

@@ -5,17 +5,21 @@ import {url} from '../../config'
 import axios from 'axios';
 import Swal from 'sweetalert2'
 import { Link } from 'react-router-dom'
+import Auth from '../../services/Auth'
 
 
 class Login extends Component{
 
     constructor(){
         super()
+        this.auth = new Auth()
         this.handleInputChange = this.handleInputChange.bind(this)
         this.state = {
             usuario : '',
             contraseña : '',
         }
+        
+        
     }
 
     handleInputChange(e){
@@ -32,11 +36,11 @@ class Login extends Component{
             usuario : this.state.usuario,
             contra: this.state.contraseña,
         }
-        console.log(usuario)
+        //console.log(usuario)
         axios.post(url.api + 'api/auth/login', { usuario })
         .then(res => {
-            console.log(res);
-            console.log(res.data);
+            //console.log(res);
+            //console.log(res.data);
             if(res.data.status === 400){
                 Swal.fire({
                     title: 'Error!',
@@ -46,16 +50,9 @@ class Login extends Component{
                 return;
             }
                  
-            Swal.fire({
-                title:'Usuario valido',
-                icon: 'success'
-            })
+            this.auth.iniciarSesion(res.data.name,res.data.usuario,res.data.imagen)
+            this.props.history.push('/')
 
-            this.setState = {
-                usuario : '',
-                contraseña : '',
-            }
-            return;
         }).catch(error =>{
             console.log(error.response)
             Swal.fire({
