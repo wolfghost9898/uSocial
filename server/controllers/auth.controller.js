@@ -40,8 +40,9 @@ const login = async(req,res) =>{
 
         return res.send({
             status: 200,
-            id: user.id,
+            usuario: user.usuario,
             name: user.usuario,
+            imagen: user.imagen,
             message: "Usuario valido"
         })
 

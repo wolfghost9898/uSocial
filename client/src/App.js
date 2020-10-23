@@ -1,17 +1,28 @@
-import React, { Component } from 'react';
+import React, { Component, useState } from 'react';
 import './App.css';
 import { BrowserRouter as Router, Route, Link, BrowserRouter, Redirect, Switch } from 'react-router-dom'
 
 import Login from './components/Login/Login'
 import Register from './components/Register/Register'
 import Inicio from './components/Inicio/Inicio'
+import GuardRoute from './Guards/GuardRoute'
+import Auth from './services/Auth'
+
 
 class App extends Component {
+
+
+  constructor(){
+    super()
+    this.auth = new Auth()
+  }
+
   render() {
     return (
       <BrowserRouter>
         <div>
           <Switch>
+            <GuardRoute  exact path="/" component={Inicio} auth={this.auth.sesionIniciada()} />
             <Route
               exact
               path="/register"
@@ -22,11 +33,9 @@ class App extends Component {
               path="/login"
               component={Login}
             />
-            <Route
-              exact
-              path="/inicio"
-              component={Inicio}
-            />
+            
+            
+            
           </Switch>
         </div>
       </BrowserRouter>
