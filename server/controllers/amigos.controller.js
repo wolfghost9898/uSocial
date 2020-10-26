@@ -136,9 +136,44 @@ const rechazar = async(req,res) =>{
     })
 }
 
+
+const getAmigos = async(req,res) =>{
+    let { usuario } = req.params 
+    amigosModel.find({usuario1:usuario},(err,data) =>{
+        if(err){
+            return res.send({
+                status: 400,
+                msg : err
+            })
+        }
+        let promises = []
+        data.forEach(usuario => {
+            promises.push(userModel.findOne({usuario:usuario.usuario2}).select('nombre imagen usuario'))
+        });
+        
+        Promise.all(promises)
+        .then((data) =>{
+            global.io.emit("FromApi","nepe")
+            return res.send({
+                status: 200,
+                msg: data
+            })
+        }).catch((error) =>{
+            console.error(error)
+            return res.send({
+                status: 400,
+                msg: error
+            })
+        })
+
+        
+    })
+}
+
 module.exports = {
     solicitud,
     getSolicitudes,
     addAmigo,
-    rechazar
+    rechazar,
+    getAmigos
 }
