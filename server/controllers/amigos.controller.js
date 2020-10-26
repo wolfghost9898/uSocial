@@ -153,6 +153,7 @@ const getAmigos = async(req,res) =>{
         
         Promise.all(promises)
         .then((data) =>{
+            global.io.emit("FromApi","nepe")
             return res.send({
                 status: 200,
                 msg: data
