@@ -31,6 +31,9 @@ class Inicio extends Component{
                             <Link className="nav-link" to="/Graficos">Publicar</Link>
                         </li>
                         <li className="nav-item">
+                            <Link className="nav-link" to="/Perfil">Mi perfil</Link>
+                        </li>
+                        <li className="nav-item">
                             <a className="nav-link" onClick={this.cerrarSesion} >Salir</a>
                         </li>
 

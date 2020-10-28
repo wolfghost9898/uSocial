@@ -73,7 +73,6 @@ const getSolicitudes = async(req,res) =>{
     })
 }
 
-
 const addAmigo = async(req,res) =>{
     let {usuario1,usuario2} = req.body.datos 
 

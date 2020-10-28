@@ -47,6 +47,8 @@ class Login extends Component{
                     text: res.data.msg,
                     icon: 'error',
                 })
+                
+                this.setState({ contraseña : '' })
                 return;
             }
                  
@@ -60,6 +62,7 @@ class Login extends Component{
                 text: 'Ha ocurrido un error:(',
                 icon: 'error',
             })
+            this.setState({ contraseña : '' })
         })
     }
        

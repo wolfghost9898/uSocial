@@ -49,7 +49,7 @@ const login = async(req,res) =>{
     }catch (e) {
         console.log(e);
         return res.send({
-            status: 500,
+            status: 400,
             msg : e
         })
     }
@@ -138,6 +138,132 @@ const register = async (req, res) => {
     })
 }
 
+const updateUsuario = async(req,res) =>{
+    let { usuarioActual } = req.params  
+    let { nombre, usuario, contra, imagen} = req.body.usuario
+    
+    console.log(req.params)
+    console.log(req.body.usuario)
+    
+    try{
+        const user = await userModel.findOne({usuario: usuarioActual})    
+        if(!user){
+            return res.send({
+                status: 400,
+                msg : "Usuario incorrecto"
+            })
+        }
+
+        const contraseñaValida = Bcrypt.compareSync(contra, user.contraseña);
+        if (!contraseñaValida) {
+            return res.send({
+                status: 400,
+                msg : "Contraseña incorrecta"
+            })
+        }
+
+        //Modificar usuario
+        if(imagen == null){
+            userModel.updateOne({ usuario: usuarioActual }, {
+                $set: {
+                    nombre: nombre,
+                    usuario: usuario
+                }
+            },(err,result) =>{
+                if(err){
+                    return res.send({
+                        status: 400,
+                        msg: err
+                    })
+                }
+    
+                //Obtener usuario
+                userModel.find({usuario:usuario},(err,data) =>{
+                    if(err){
+                        return res.send({
+                            status: 400,
+                            msg: err
+                        })
+                    }
+                    return res.send({
+                        status: 200,
+                        usuario: data[0].usuario,
+                        name: data[0].nombre,
+                        imagen: data[0].imagen,
+                        msg: "Datos actualizados"
+                    })
+                })
+            })
+        }else{
+            //Subir imagen a s3
+            imagen = (imagen.split('base64,'))[1]
+            let bitmap = Buffer.from(imagen, 'base64')
+            let date = dateTime.create()
+            let formato = date.format('Y-m-d_H_M_S')
+            let identificador = usuario + "_" + formato
+            imagen = config.buckerURL + "user/" + identificador + ".png"
+
+            let s3 = new AWS.S3({
+                accessKeyId: config.bucketID,
+                secretAccessKey: config.bucketPassword
+            })
+            let params = {
+                Bucket: config.bucketName + "/user",
+                Key: identificador + ".png",
+                Body: bitmap,
+                ContentEnconding: 'base64',
+                ContentType: 'image/jpg'
+            }
+
+            s3.upload(params,function(err,result){
+                if(err){
+                    console.log(err)
+                    return res.send({
+                        status: 400,
+                        msg : err
+                    })
+                }
+                userModel.updateOne({ usuario: usuarioActual }, {
+                    $set: {
+                        nombre: nombre,
+                        usuario: usuario,
+                        imagen: imagen
+                    }
+                },(err,result) =>{
+                    if(err){
+                        return res.send({
+                            status: 400,
+                            msg: err
+                        })
+                    }
+        
+                    //Obtener usuario
+                    userModel.find({usuario:usuario},(err,data) =>{
+                        if(err){
+                            return res.send({
+                                status: 400,
+                                msg: err
+                            })
+                        }
+                        return res.send({
+                            status: 200,
+                            usuario: data[0].usuario,
+                            name: data[0].nombre,
+                            imagen: data[0].imagen,
+                            msg: "Datos actualizados"
+                        })
+                    })
+                })
+            })
+        }
+    }catch (e) {
+        console.log(e);
+        return res.send({
+            status: 400,
+            msg : e
+        })
+    }
+}
 
 
 function generateHash(username,secretHash,clientId){
@@ -148,5 +274,6 @@ function generateHash(username,secretHash,clientId){
 
 module.exports = {
     login,
-    register
+    register,
+    updateUsuario
 }
