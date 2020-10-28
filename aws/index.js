@@ -1,22 +1,13 @@
 'use strict'
-const express = require('express')
-const cors = require('cors')
 const PORT = process.env.PORT || 3000
-const bodyParser = require('body-parser');
-const app = express()
 const axios = require('axios');
 let url = "https://fherherand.github.io/covid-19-data-update/timeseries.json";
 
 
 
-app.use(cors())
-app.use(bodyParser.json({ limit: '70mb' }));
-app.use(bodyParser.urlencoded({ extended: true, limit: '70mb', parameterLimit: 70000 }));
 
-
-
-app.use('/', function (req, res) {
-    let { tipo, pais, fecha, atributo, fecha2 } = req.body
+module.exports.handler = (event, context, callback) => {
+    let { tipo, pais, fecha, atributo, fecha2 } = event
     axios.get(url)
         .then(function (data) {
             data = data.data
@@ -46,22 +37,22 @@ app.use('/', function (req, res) {
 
             }
 
-            return res.send({
+            let response =  {
                 status: 200,
                 msg: info
-            })
+            }
+            callback(null,response)
         })
         .catch(function (error) {
             console.log(error)
-            return res.send({
+            let response =  {
                 status: 400,
                 msg: error
-            })
+            }
+            callback(null,response)
         })
-})
+}
 
 
-const server = app.listen(PORT, '0.0.0.0', () => {
-    console.log('Server running on port ', PORT)
-})
+
 
