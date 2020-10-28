@@ -22,9 +22,9 @@ class Perfil extends Component{
             usuarioActual : this.me.usuario,
             usuario : this.me.usuario,
             contraseña : '',
+            modoBot : this.me.modoBot,
             pictures:[],
         }
-        this.statesModoBot = [ "On", "Off" ];
     }
 
     cerrarSesion(){
@@ -43,12 +43,7 @@ class Perfil extends Component{
         if(id === 'nombre') this.setState({ nombre : value })
         else if(id === 'usuario') this.setState({ usuario : value })
         else if(id === 'contraseña') this.setState({ contraseña : value })
-    }
-    
-    handleChange = (event) => {
-        this.setState({
-            value: event.target.value
-        });
+        else if(id === 'modoBot') this.setState({ modoBot : value })
     }
 
     onSubmit = data =>{
@@ -61,6 +56,7 @@ class Perfil extends Component{
                     nombre : this.state.nombre,
                     usuario : this.state.usuario,
                     contra: this.state.contraseña,
+                    modoBot: this.state.modoBot,
                     imagen: reader.result
                 }
                 axios.put(url.api + 'api/auth/updateUsuario/' + this.state.usuarioActual , { usuario })
@@ -74,10 +70,11 @@ class Perfil extends Component{
                         return;
                     }
 
-                    this.auth.iniciarSesion(res.data.name,res.data.usuario,res.data.imagen)
+                    this.auth.iniciarSesion(res.data.name,res.data.usuario,res.data.modoBot,res.data.imagen)
                     this.me = this.auth.obtenerInformacion()
                     this.setState({ usuarioActual : this.me.usuario })
                     this.setState({ contraseña : '' })
+                    this.setState({ modoBot : this.me.modoBot })
                     this.setState({ pictures : [] })
 
                     Swal.fire({
@@ -100,6 +97,7 @@ class Perfil extends Component{
                 nombre : this.state.nombre,
                 usuario : this.state.usuario,
                 contra: this.state.contraseña,
+                modoBot: this.state.modoBot,
                 imagen: null
             }
             axios.put(url.api + 'api/auth/updateUsuario/' + this.state.usuarioActual , { usuario })
@@ -113,10 +111,11 @@ class Perfil extends Component{
                     return;
                 }
 
-                this.auth.iniciarSesion(res.data.name,res.data.usuario,res.data.imagen)
+                this.auth.iniciarSesion(res.data.name,res.data.usuario,res.data.modoBot,res.data.imagen)
                 this.me = this.auth.obtenerInformacion()
                 this.setState({ usuarioActual : this.me.usuario })
                 this.setState({ contraseña : '' })
+                this.setState({ modoBot : this.me.modoBot })
 
                 Swal.fire({
                     title:'Datos actualizados',
@@ -178,6 +177,15 @@ class Perfil extends Component{
                                                 Usuario:
                                             </label>
                                             <input type="text" id="usuario" value={this.state.usuario} onChange={this.handleInputChange} className="form-control" autoComplete="off" required/>
+                                        </div>
+                                        <div className="form-group">
+                                            <label>
+                                                Modo Bot:
+                                            </label>
+                                            <select id="modoBot" value={this.state.modoBot} onChange={this.handleInputChange}>
+                                                <option value="0">Off</option>
+                                                <option value="1">On</option>
+                                            </select>
                                         </div>
                                         <div className="form-group">
                                             <label>

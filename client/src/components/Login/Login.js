@@ -52,7 +52,7 @@ class Login extends Component{
                 return;
             }
                  
-            this.auth.iniciarSesion(res.data.name,res.data.usuario,res.data.imagen)
+            this.auth.iniciarSesion(res.data.name,res.data.usuario,res.data.modoBot,res.data.imagen)
             this.props.history.push('/')
 
         }).catch(error =>{

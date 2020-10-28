@@ -42,6 +42,7 @@ const login = async(req,res) =>{
             status: 200,
             usuario: user.usuario,
             name: user.nombre,
+            modoBot: user.modoBot,
             imagen: user.imagen,
             message: "Usuario valido"
         })
@@ -70,6 +71,7 @@ const register = async (req, res) => {
         nombre: nombre,
         usuario: usuario,
         contraseña: contra,
+        modoBot: '0',
         imagen: config.buckerURL + "user/" + identificador + ".png"
     })
 
@@ -140,10 +142,10 @@ const register = async (req, res) => {
 
 const updateUsuario = async(req,res) =>{
     let { usuarioActual } = req.params  
-    let { nombre, usuario, contra, imagen} = req.body.usuario
+    let { nombre, usuario, contra, modoBot, imagen} = req.body.usuario
     
-    console.log(req.params)
-    console.log(req.body.usuario)
+    //console.log(req.params)
+    //console.log(req.body.usuario)
     
     try{
         const user = await userModel.findOne({usuario: usuarioActual})    
@@ -167,7 +169,8 @@ const updateUsuario = async(req,res) =>{
             userModel.updateOne({ usuario: usuarioActual }, {
                 $set: {
                     nombre: nombre,
-                    usuario: usuario
+                    usuario: usuario,
+                    modoBot: modoBot
                 }
             },(err,result) =>{
                 if(err){
@@ -189,6 +192,7 @@ const updateUsuario = async(req,res) =>{
                         status: 200,
                         usuario: data[0].usuario,
                         name: data[0].nombre,
+                        modoBot: data[0].modoBot,
                         imagen: data[0].imagen,
                         msg: "Datos actualizados"
                     })
@@ -227,6 +231,7 @@ const updateUsuario = async(req,res) =>{
                     $set: {
                         nombre: nombre,
                         usuario: usuario,
+                        modoBot: modoBot,
                         imagen: imagen
                     }
                 },(err,result) =>{
@@ -249,6 +254,7 @@ const updateUsuario = async(req,res) =>{
                             status: 200,
                             usuario: data[0].usuario,
                             name: data[0].nombre,
+                            modoBot: data[0].modoBot,
                             imagen: data[0].imagen,
                             msg: "Datos actualizados"
                         })

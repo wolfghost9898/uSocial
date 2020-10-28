@@ -5,6 +5,7 @@ var userSchema = new Schema({
     nombre: String,
     usuario: String,
     contraseña: String,
+    modoBot: Number,
     imagen:String
 })
 

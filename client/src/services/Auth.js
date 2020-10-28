@@ -4,9 +4,10 @@ class Auth{
 
     }
 
-    iniciarSesion(nombre,usuario,imagen){
+    iniciarSesion(nombre,usuario,modoBot,imagen){
         localStorage.setItem('nombre',nombre);
         localStorage.setItem('usuario',usuario);
+        localStorage.setItem('modoBot',modoBot);
         localStorage.setItem('imagen',imagen)
     }
 
@@ -16,7 +17,7 @@ class Auth{
     }
 
     obtenerInformacion(){
-        return {usuario:localStorage.getItem('usuario'),nombre: localStorage.getItem('nombre'),image: localStorage.getItem('imagen')}
+        return {usuario:localStorage.getItem('usuario'),nombre: localStorage.getItem('nombre'),modoBot: localStorage.getItem('modoBot'),image: localStorage.getItem('imagen')}
     }
 
 
