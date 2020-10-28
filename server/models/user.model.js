@@ -5,7 +5,8 @@ var userSchema = new Schema({
     nombre: String,
     usuario: String,
     contraseña: String,
-    imagen:String
+    imagen:String,
+    bot: Number
 })
 
 
