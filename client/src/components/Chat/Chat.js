@@ -116,13 +116,16 @@ class Chat extends Component {
 
     getData() {
         let usuario = this.me
-        this.setState({
-            amigos: [{
-                imagen: "https://pm1.narvii.com/7076/745e81cb77b6867c7ca66cacc655c46eb6df7237r1-1500-1203v2_hq.jpg",
-                nombre: "ChatBot",
-                usuario: "ChatBot"
-            }]
-        })
+        if(usuario.modoBot === '1'){
+            this.setState({
+                amigos: [{
+                    imagen: "https://pm1.narvii.com/7076/745e81cb77b6867c7ca66cacc655c46eb6df7237r1-1500-1203v2_hq.jpg",
+                    nombre: "ChatBot",
+                    usuario: "ChatBot"
+                }]
+            })
+        }
+        
         axios.get(url.api + 'api/amigo/getAmigos/' + usuario.usuario)
             .then(response => {
                 let data = response.data

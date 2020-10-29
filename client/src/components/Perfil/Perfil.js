@@ -27,6 +27,11 @@ class Perfil extends Component{
         }
     }
 
+
+    componentDidMount() {
+        document.title = "Perfil"
+        
+    }
     cerrarSesion(){
         this.auth.cerrarSesion()
         this.props.history.push('/login')
@@ -194,7 +199,7 @@ class Perfil extends Component{
                                         </div>
                                         <div className="form-group">
                                             <span className="pull-left">
-                                                <img className='profile-image' alt='icon' src={this.me.image} />
+                                                <img className='profile-image img-fluid' alt='icon' src={this.me.image} />
                                             </span>
                                         </div>
                                         <div className="form-group">
