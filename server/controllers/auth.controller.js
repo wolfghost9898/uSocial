@@ -59,7 +59,7 @@ const login = async(req,res) =>{
 const register = async (req, res) => {
     AWS.config.update(config.aws_remote_config)
     let { nombre, usuario, contra, imagen } = req.body.usuario
-    contra = Bcrypt.hashSync(contra, 10)
+    let contraseñaEncriptada = Bcrypt.hashSync(contra, 10)
     
     let date = dateTime.create();
     let formato = date.format('Y-m-d_H_M_S');
@@ -70,7 +70,7 @@ const register = async (req, res) => {
     let newUser = userModel({
         nombre: nombre,
         usuario: usuario,
-        contraseña: contra,
+        contraseña: contraseñaEncriptada,
         modoBot: '0',
         imagen: config.buckerURL + "user/" + identificador + ".png"
     })
