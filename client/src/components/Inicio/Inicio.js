@@ -1,6 +1,7 @@
 import React,{Component} from 'react';
 import './Style.css'
 import Auth from '../../services/Auth'
+import Bot from '../Chat/Bot'
 import { Link } from 'react-router-dom'
 
 class Inicio extends Component{    

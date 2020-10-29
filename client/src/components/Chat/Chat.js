@@ -6,6 +6,8 @@ import Swal from 'sweetalert2'
 import axios from 'axios';
 import { url } from '../../config'
 import socketIOClient from "socket.io-client";
+import Bot from './Bot';
+import Line from './Line'
 
 class Chat extends Component {
     state = {
@@ -17,6 +19,8 @@ class Chat extends Component {
     }
 
     socket
+    messagesEnd
+
     constructor() {
         super()
         this.auth = new Auth()
@@ -28,33 +32,72 @@ class Chat extends Component {
         this.getData = this.getData.bind(this)
         this.handleInputChange = this.handleInputChange.bind(this)
 
+        this.bot = new Bot();
+
+        this.scrollToBottom = this.scrollToBottom.bind(this)
+
+
+
     }
 
     handleInputChange(e) {
         let { id, value } = e.target
         if (id === 'mensaje') this.setState({ mensaje: value })
+
     }
 
     onSubmit = data => {
         data.preventDefault();
-        axios.post(url.api + 'api/chat/enviar', { emisor: this.me.usuario, receptor: this.state.usuario, mensaje: this.state.mensaje })
-            .then(res => {
-                console.log(res)
-                if (res.data.status === 200) {
-                    let mensajes = this.state.mensajes
-                    mensajes.push({
-                        emisor: this.me.usuario,
-                        receptor: this.state.usuario,
-                        mensaje: this.state.mensaje
-                    })
-                    this.setState({ mensajes: mensajes })
-                    this.setState({ mensaje: '' })
-                }
+        //Modo Bot
+        if (this.state.usuario === "ChatBot") {
+            let mensajes = this.state.mensajes
+            mensajes.push({
+                emisor: this.me.usuario,
+                receptor: this.state.usuario,
+                mensaje: this.state.mensaje,
+            })
 
-            })
-            .catch(error => {
-                console.error(error)
-            })
+            this.bot.recibirMensaje(this.state.mensaje, function (respose) {
+                mensajes.push({
+                    emisor: this.state.usuario,
+                    receptor: this.me.usuario,
+                    mensaje: respose
+                })
+                this.setState({ mensajes: mensajes })
+                this.setState({ mensaje: '' })
+
+
+            }.bind(this))
+        }
+        //Modo Usuario
+        else {
+            axios.post(url.api + 'api/chat/enviar', { emisor: this.me.usuario, receptor: this.state.usuario, mensaje: this.state.mensaje })
+                .then(res => {
+                    console.log(res)
+                    if (res.data.status === 200) {
+                        let mensajes = this.state.mensajes
+                        mensajes.push({
+                            emisor: this.me.usuario,
+                            receptor: this.state.usuario,
+                            mensaje: this.state.mensaje
+                        })
+                        this.setState({ mensajes: mensajes })
+                        this.setState({ mensaje: '' })
+
+                    }
+
+                })
+                .catch(error => {
+                    console.error(error)
+                })
+        }
+
+        this.scrollToBottom()
+
+    }
+
+    scrollToBottom = () => {
+        this.messagesEnd.scrollIntoView({ behavior: "smooth" });
     }
 
     componentDidMount() {
@@ -73,15 +116,25 @@ class Chat extends Component {
 
     getData() {
         let usuario = this.me
+        this.setState({
+            amigos: [{
+                imagen: "https://pm1.narvii.com/7076/745e81cb77b6867c7ca66cacc655c46eb6df7237r1-1500-1203v2_hq.jpg",
+                nombre: "ChatBot",
+                usuario: "ChatBot"
+            }]
+        })
         axios.get(url.api + 'api/amigo/getAmigos/' + usuario.usuario)
             .then(response => {
                 let data = response.data
-                if (data.status === 200) this.setState({ amigos: data.msg })
-                //console.log(data)
+                if (data.status === 200) {
+                    let amigos = this.state.amigos
+                    amigos = amigos.concat(data.msg)
+                    this.setState({ amigos: amigos })
+                }
+                console.log(data)
             })
             .catch(error => {
                 console.log(error)
-                this.setState({ amigos: [] })
             })
     }
 
@@ -132,30 +185,50 @@ class Chat extends Component {
     }
 
     escogerChat(usuario) {
-        this.setState({ nombre: usuario.nombre, usuario: usuario.usuario })
+        this.state.nombre = usuario.nombre
+        this.state.usuario = usuario.usuario
+        console.log(usuario)
+        console.log(this.state)
         if (this.socket) this.socket.disconnect()
-        this.socket = socketIOClient(url.api)
-        axios.get(url.api + 'api/chat/conversacion/' + this.me.usuario + "/" + usuario.usuario)
-        .then(response => {
-            let data = response.data
-            if (data.status === 200) this.setState({ mensajes: data.msg })
-            else this.setState({ amigos: [] })
-            
-        })
-        .catch(error => {
-            console.log(error)
-            this.setState({ amigos: [] })
-        })
-        //console.log(this.me.usuario + '-' + usuario.usuario)
-        this.socket.on(this.me.usuario + '-' + usuario.usuario, data => {
-            let mensajes = this.state.mensajes
+        //Modo Bot
+        if (usuario.nombre === "ChatBot") {
+            let mensajes = []
+            this.bot = new Bot()
             mensajes.push({
                 emisor: usuario.usuario,
                 receptor: this.me.usuario,
-                mensaje: data
+                mensaje: "Ingresa el comando !command"
             })
             this.setState({ mensajes: mensajes })
-        })
+        }
+        //Con usuarios
+        else {
+            this.socket = socketIOClient(url.api)
+            axios.get(url.api + 'api/chat/conversacion/' + this.me.usuario + "/" + usuario.usuario)
+                .then(response => {
+                    let data = response.data
+                    if (data.status === 200) this.setState({ mensajes: data.msg })
+                    else this.setState({ amigos: [] })
+
+                })
+                .catch(error => {
+                    console.log(error)
+                    this.setState({ amigos: [] })
+                })
+            //console.log(this.me.usuario + '-' + usuario.usuario)
+            this.socket.on(this.me.usuario + '-' + usuario.usuario, data => {
+                let mensajes = this.state.mensajes
+                mensajes.push({
+                    emisor: usuario.usuario,
+                    receptor: this.me.usuario,
+                    mensaje: data
+                })
+                this.setState({ mensajes: mensajes })
+                this.scrollToBottom()
+            })
+        }
+
+
         //console.log(usuario)
     }
 
@@ -221,31 +294,50 @@ class Chat extends Component {
                                                     </div>
                                                 </div>
                                                 {/*Cuerpo*/}
-                                                <div className="card bg-sohbet border-0 m-0 p-0 cardBody">
-                                                    <div id="sohbet" className="card boder-0 m-0 p-0 position-relative bg-transparent chat">
+                                                <div className="card bg-sohbet border-0 m-0 p-0 cardBody" >
+                                                    <div id="sohbet" className="card boder-0 m-0 p-0 position-relative bg-transparent chat" >
 
                                                         {this.state.mensajes.map((mensaje, i) => {
+                                                            //console.log(i)
                                                             if (mensaje.emisor === this.me.usuario) {
-                                                                return <div className="balon1 p-2 m-0 position-relative" data-is="You" key={i}>
-
+                                                                return <div className="balon1 p-2 m-0 position-relative divMensaje" data-is="You" key={i} >
                                                                     <a className="float-right"> {mensaje.mensaje}</a>
-
                                                                 </div>
                                                             }
                                                             else {
-                                                                return <div className="balon2 p-2 m-0 position-relative" data-is={mensaje.receptor} key={i}>
+                                                                if (typeof mensaje.mensaje === "string") {
+                                                                    return <div className="balon2 p-2 m-0 position-relative divMensaje" data-is={mensaje.emisor} key={i} >
 
-                                                                    <a className="float-left sohbet2"> {mensaje.mensaje} </a>
+                                                                        <a className="float-left"> {mensaje.mensaje} </a>
 
+                                                                    </div>
+                                                                }
+                                                                return <div className="p-2 m-0 position-relative " data-is={mensaje.emisor} key={i} >
+
+                                                                    <div className="float-left grafica"> <Line confirmados={mensaje.mensaje.confirmados} recuperados={mensaje.mensaje.recuperados} muertos={mensaje.mensaje.muertos} /> </div>
+                                                                    
                                                                 </div>
-                                                            }
 
+                                                            }
 
 
                                                         })}
 
+                                                        <div className="balon1 p-2 m-0 position-relative divMensaje invisible"
+                                                        > mensaje
+                                                        </div>
+                                                        <div className="balon2 p-2 m-0 position-relative divMensaje invisible"
+                                                        >mensaje
+                                                        </div>
+                                                        <div className="balon1 p-2 m-0 position-relative divMensaje invisible"
+                                                        >mensaje
+                                                        </div>
+                                                        <div className="balon2 p-2 m-0 position-relative divMensaje invisible"
+                                                            ref={(el) => { this.messagesEnd = el; }}>mensaje
+                                                        </div>
 
                                                     </div>
+
                                                 </div>
                                                 {/*Footer*/}
                                                 <div className="w-100 card-footer p-0 bg-light border border-bottom-0 border-left-0 border-right-0">
