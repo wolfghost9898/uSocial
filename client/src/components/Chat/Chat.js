@@ -7,6 +7,7 @@ import axios from 'axios';
 import { url } from '../../config'
 import socketIOClient from "socket.io-client";
 import Bot from './Bot';
+import Line from './Line'
 
 class Chat extends Component {
     state = {
@@ -18,6 +19,8 @@ class Chat extends Component {
     }
 
     socket
+    messagesEnd
+
     constructor() {
         super()
         this.auth = new Auth()
@@ -31,11 +34,16 @@ class Chat extends Component {
 
         this.bot = new Bot();
 
+        this.scrollToBottom = this.scrollToBottom.bind(this)
+
+
+
     }
 
     handleInputChange(e) {
         let { id, value } = e.target
         if (id === 'mensaje') this.setState({ mensaje: value })
+
     }
 
     onSubmit = data => {
@@ -46,15 +54,20 @@ class Chat extends Component {
             mensajes.push({
                 emisor: this.me.usuario,
                 receptor: this.state.usuario,
-                mensaje: this.state.mensaje
+                mensaje: this.state.mensaje,
             })
-            mensajes.push({
-                emisor : this.state.usuario,
-                receptor: this.me.usuario,
-                mensaje: this.bot.recibirMensaje(this.state.mensaje)
-            })
-            this.setState({ mensajes: mensajes })
-            this.setState({ mensaje: '' })
+
+            this.bot.recibirMensaje(this.state.mensaje, function (respose) {
+                mensajes.push({
+                    emisor: this.state.usuario,
+                    receptor: this.me.usuario,
+                    mensaje: respose
+                })
+                this.setState({ mensajes: mensajes })
+                this.setState({ mensaje: '' })
+
+
+            }.bind(this))
         }
         //Modo Usuario
         else {
@@ -70,6 +83,7 @@ class Chat extends Component {
                         })
                         this.setState({ mensajes: mensajes })
                         this.setState({ mensaje: '' })
+
                     }
 
                 })
@@ -78,6 +92,12 @@ class Chat extends Component {
                 })
         }
 
+        this.scrollToBottom()
+
+    }
+
+    scrollToBottom = () => {
+        this.messagesEnd.scrollIntoView({ behavior: "smooth" });
     }
 
     componentDidMount() {
@@ -180,7 +200,6 @@ class Chat extends Component {
                 mensaje: "Ingresa el comando !command"
             })
             this.setState({ mensajes: mensajes })
-            console.log("bot")
         }
         //Con usuarios
         else {
@@ -205,8 +224,11 @@ class Chat extends Component {
                     mensaje: data
                 })
                 this.setState({ mensajes: mensajes })
+                this.scrollToBottom()
             })
         }
+
+
         //console.log(usuario)
     }
 
@@ -272,31 +294,50 @@ class Chat extends Component {
                                                     </div>
                                                 </div>
                                                 {/*Cuerpo*/}
-                                                <div className="card bg-sohbet border-0 m-0 p-0 cardBody">
-                                                    <div id="sohbet" className="card boder-0 m-0 p-0 position-relative bg-transparent chat">
+                                                <div className="card bg-sohbet border-0 m-0 p-0 cardBody" >
+                                                    <div id="sohbet" className="card boder-0 m-0 p-0 position-relative bg-transparent chat" >
 
                                                         {this.state.mensajes.map((mensaje, i) => {
+                                                            //console.log(i)
                                                             if (mensaje.emisor === this.me.usuario) {
-                                                                return <div className="balon1 p-2 m-0 position-relative divMensaje" data-is="You" key={i}>
-
+                                                                return <div className="balon1 p-2 m-0 position-relative divMensaje" data-is="You" key={i} >
                                                                     <a className="float-right"> {mensaje.mensaje}</a>
-
                                                                 </div>
                                                             }
                                                             else {
-                                                                return <div className="balon2 p-2 m-0 position-relative divMensaje" data-is={mensaje.emisor} key={i}>
+                                                                if (typeof mensaje.mensaje === "string") {
+                                                                    return <div className="balon2 p-2 m-0 position-relative divMensaje" data-is={mensaje.emisor} key={i} >
 
-                                                                    <a className="float-left sohbet2"> {mensaje.mensaje} </a>
+                                                                        <a className="float-left"> {mensaje.mensaje} </a>
 
+                                                                    </div>
+                                                                }
+                                                                return <div className="p-2 m-0 position-relative " data-is={mensaje.emisor} key={i} >
+
+                                                                    <div className="float-left grafica"> <Line confirmados={mensaje.mensaje.confirmados} recuperados={mensaje.mensaje.recuperados} muertos={mensaje.mensaje.muertos} /> </div>
+                                                                    
                                                                 </div>
-                                                            }
 
+                                                            }
 
 
                                                         })}
 
+                                                        <div className="balon1 p-2 m-0 position-relative divMensaje invisible"
+                                                        > mensaje
+                                                        </div>
+                                                        <div className="balon2 p-2 m-0 position-relative divMensaje invisible"
+                                                        >mensaje
+                                                        </div>
+                                                        <div className="balon1 p-2 m-0 position-relative divMensaje invisible"
+                                                        >mensaje
+                                                        </div>
+                                                        <div className="balon2 p-2 m-0 position-relative divMensaje invisible"
+                                                            ref={(el) => { this.messagesEnd = el; }}>mensaje
+                                                        </div>
 
                                                     </div>
+
                                                 </div>
                                                 {/*Footer*/}
                                                 <div className="w-100 card-footer p-0 bg-light border border-bottom-0 border-left-0 border-right-0">
