@@ -27,6 +27,7 @@ const dbConnectionUrl = `mongodb://${host}:${puerto}/${db}`;
 app.use('/api/auth', require('./routes/auth.route'))
 app.use('/api/amigo',require('./routes/amigos.route'))
 app.use('/api/chat',require('./routes/chat.route'))
+app.use('/api/publicacion',require('./routes/publicacion.route'))
 
 mongoose.connect(dbConnectionUrl,
     { useNewUrlParser: true, useUnifiedTopology: true },

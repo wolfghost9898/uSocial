@@ -1,53 +1,162 @@
 import React,{Component} from 'react';
+import ImageUploader from 'react-images-upload';
+import '../../../node_modules/bootstrap/dist/css/bootstrap.min.css';
 import './Style.css'
 import Auth from '../../services/Auth'
 import Bot from '../Chat/Bot'
 import { Link } from 'react-router-dom'
+import Swal from 'sweetalert2'
+import axios from 'axios'
+import { url } from '../../config'
 
-class Inicio extends Component{    
+class Inicio extends Component{
+
     constructor(){
         super()
         this.auth = new Auth()
         this.cerrarSesion = this.cerrarSesion.bind(this)
+        this.onDrop = this.onDrop.bind(this)  
+        this.me = this.auth.obtenerInformacion()
+        this.getPublicaciones = this.getPublicaciones.bind(this)   
+        this.state = {
+            publicaciones: [],
+            amigos: [],
+            publicacionesAmigos: []
+        }
     } 
+
+    componentDidMount() {
+        this.getPublicaciones()
+    }
 
     cerrarSesion(){
         this.auth.cerrarSesion()
         this.props.history.push('/login')
     }
 
+    onDrop(picturesFiles,pictureDataURLs){
+        this.setState({
+            pictures:picturesFiles
+        })
+    }
+
+    getPublicaciones(){
+        let usuario = this.me
+        this.state.publicacionesAmigos = []
+        axios.get(url.api + 'api/publicacion/getPublicaciones')
+        .then(response => {
+            let data = response.data
+            if (data.status === 200) {
+                let publicaciones = this.state.publicaciones
+                publicaciones = publicaciones.concat(data.msg)
+                this.setState({ publicaciones: publicaciones })
+            }
+            axios.get(url.api + 'api/amigo/getAmigos/' + usuario.usuario)
+            .then(response => {
+                let data = response.data
+                if (data.status === 200) {
+                    let amigos = this.state.amigos
+                    amigos = amigos.concat(data.msg)
+                    this.setState({ amigos: amigos })
+
+                    for(var i=0; i<this.state.publicaciones.length; i++){
+                        //console.log(this.state.publicaciones[i])
+
+                        for(var x=0; x<this.state.amigos.length; x++){
+                            if(this.state.publicaciones[i].usuario === this.state.amigos[x].usuario){
+                                let item = {
+                                    usuario : this.state.amigos[x].usuario,
+                                    imagenUsuario: this.state.amigos[x].imagen,
+                                    textoPublicacion: this.state.publicaciones[i].texto,
+                                    imagenPublicacion: this.state.publicaciones[i].imagen,
+                                    date: this.state.publicaciones[i].date
+                                }
+                                let itemm = this.state.publicacionesAmigos
+                                itemm = itemm.concat(item)
+                                this.setState({ publicacionesAmigos: itemm })
+                            }
+                        }
+                        
+                        
+                        if(this.state.publicaciones[i].usuario === usuario.usuario){
+                            let item = {
+                                usuario : usuario.usuario,
+                                imagenUsuario: usuario.image,
+                                textoPublicacion: this.state.publicaciones[i].texto,
+                                imagenPublicacion: this.state.publicaciones[i].imagen,
+                                date: this.state.publicaciones[i].date
+                            }
+                            let itemm = this.state.publicacionesAmigos
+                            itemm = itemm.concat(item)
+                            this.setState({ publicacionesAmigos: itemm })
+                            //console.log(this.state.publicacionesAmigos)
+                        }
+                    }
+                    //console.log(this.state.publicacionesAmigos)
+                    const reversed = this.state.publicacionesAmigos.reverse();
+                    this.setState({ publicacionesAmigos: reversed })
+                    console.log(this.state.publicacionesAmigos)
+                }
+            })
+            .catch(error => {
+                console.log(error)
+            })
+        })
+        .catch(error => {
+            console.log(error)
+        })
+    }
+
     render() {
         return (
             <div>
                 <nav className="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
-                <button className="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
-                    <span className="navbar-toggler-icon"></span>
-                </button>
-                <div className="collapse navbar-collapse" id="navbarCollapse">
-                    <ul className="navbar-nav mr-auto">
-                        <li className="nav-item active">
-                            <Link className="nav-link" to="/chat">Chat <span className="sr-only">(current)</span></Link>
-                        </li>
-                        <li className="nav-item">
-                            <Link className="nav-link" to="/Graficos">Publicar</Link>
-                        </li>
-                        <li className="nav-item">
-                            <Link className="nav-link" to="/Perfil">Mi perfil</Link>
-                        </li>
-                        <li className="nav-item">
-                            <a className="nav-link" onClick={this.cerrarSesion} >Salir</a>
-                        </li>
-
-                    </ul>
-                </div>
-
-            </nav>
-                <main role="main" className="flex-shrink-0 mt-5 main">
-                    <div className="container py-md-4">
-                        Hola
+                    <button className="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
+                        <span className="navbar-toggler-icon"></span>
+                    </button>
+                    <div className="collapse navbar-collapse" id="navbarCollapse">
+                        <ul className="navbar-nav mr-auto">
+                            <li className="nav-item active">
+                                <Link className="nav-link" to="/chat">Chat <span className="sr-only">(current)</span></Link>
+                            </li>
+                            <li className="nav-item">
+                                <Link className="nav-link" to="/CrearPublicacion">Publicar</Link>
+                            </li>
+                            <li className="nav-item">
+                                <Link className="nav-link" to="/Perfil">Mi perfil</Link>
+                            </li>
+                            <li className="nav-item">
+                                <a className="nav-link" onClick={this.cerrarSesion} >Salir</a>
+                            </li>
+                        </ul>
                     </div>
-                </main>
-        </div>
+                </nav>
+                <div className="container">
+                    <div className="row mt-5">
+                        {/* Lista de publicaciones*/}
+                        <div className="col-md-7 mx-auto">
+                            <div className="list-group-flush">
+                                {this.state.publicacionesAmigos.map((publicacion, i) => ( 
+                                    <li className="list-group-item mb-2 rounded" key={i}>
+                                        <span className="pull-left">
+                                            <img src={publicacion.imagenUsuario} className=" avatar img-fluid rounded imagen mr-2" />
+                                        </span>
+                                        <b>{publicacion.usuario}</b>
+                                       
+                                        <hr></hr>
+                                        <p>{publicacion.textoPublicacion}</p>  
+                                        <div className="center">
+                                            <img className='profile-image img-fluid' alt='icon' src={publicacion.imagenPublicacion}/>
+                                        </div>
+                                        <br></br>
+                                        <label>{publicacion.date}</label>
+                                    </li>
+                                ))}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         );
     }
 }

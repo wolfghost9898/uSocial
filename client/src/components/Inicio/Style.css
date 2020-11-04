@@ -2,3 +2,9 @@
     min-height: 100vh;
     background-color: #231832;
   }
+
+.center {
+  text-align: center;
+  border: 3px solid #fafcf8;
+  
+}

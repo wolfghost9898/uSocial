@@ -10,6 +10,7 @@ import GuardRoute from './Guards/GuardRoute'
 import Auth from './services/Auth'
 import Solicitudes from './components/Solicitudes/Solicitudes'
 import Perfil from './components/Perfil/Perfil'
+import CrearPublicacion from './components/Publicacion/CrearPublicacion';
 
 class App extends Component {
 
@@ -52,6 +53,12 @@ class App extends Component {
               exact
               path="/perfil"
               component={Perfil} auth={this.auth.sesionIniciada()}
+            />
+
+            <GuardRoute
+              exact
+              path="/crearPublicacion"
+              component={CrearPublicacion} auth={this.auth.sesionIniciada()}
             />
             
             

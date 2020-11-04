@@ -38,6 +38,8 @@ const login = async(req,res) =>{
             token
         });*/
 
+
+
         return res.send({
             status: 200,
             usuario: user.usuario,
@@ -112,7 +114,7 @@ const register = async (req, res) => {
             ]
             let parametros = {
                 ClientId: config.clientId,
-                Password: contra,
+                Password: contraseñaEncriptada,
                 UserAttributes:userAttr,
                 SecretHash: generateHash(usuario,config.secretHash,config.clientId),
                 Username: usuario
@@ -271,6 +273,20 @@ const updateUsuario = async(req,res) =>{
     }
 }
 
+const getUsuarios = async(req,res) =>{
+    userModel.find({},{"contraseña":0},(err,data) =>{
+        if(err){
+            return res.send({
+                status: 400,
+                msg: err
+            })
+        }
+        return res.send({
+            status: 200,
+            msg:data
+        })
+    })
+}
 
 function generateHash(username,secretHash,clientId){
     return crypto.createHmac('SHA256', secretHash)
@@ -281,5 +297,6 @@ function generateHash(username,secretHash,clientId){
 module.exports = {
     login,
     register,
-    updateUsuario
+    updateUsuario,
+    getUsuarios
 }
