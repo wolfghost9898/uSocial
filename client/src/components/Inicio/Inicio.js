@@ -139,6 +139,9 @@ class Inicio extends Component{
                                 <Link className="nav-link" to="/chat">Chat <span className="sr-only">(current)</span></Link>
                             </li>
                             <li className="nav-item">
+                                <Link className="nav-link" to="/Usuarios">Usuarios</Link>
+                            </li>
+                            <li className="nav-item">
                                 <Link className="nav-link" to="/CrearPublicacion">Publicar</Link>
                             </li>
                             <li className="nav-item">
@@ -150,35 +153,37 @@ class Inicio extends Component{
                         </ul>
                     </div>
                 </nav>
-                <div className="container">
-                    <div className="row mt-5">
-                        {/* Lista de publicaciones*/}
-                        <div className="col-md-7 mx-auto">
-                            <div className="list-group-flush">
-                                {this.state.publicacionesAmigos.map((publicacion, i) => ( 
-                                    <li className="list-group-item mb-2 rounded" key={i}>
-                                        <span className="pull-left">
-                                            <img src={publicacion.imagenUsuario} className=" avatar img-fluid rounded imagen mr-2" />
-                                        </span>
-                                        <b>{publicacion.usuario}</b>
-                                        <hr></hr>
-                                        <p>{publicacion.textoPublicacion}</p>  
-                                        <div className="center">
-                                            <img className='profile-image img-fluid' alt='icon' src={publicacion.imagenPublicacion}/>
-                                        </div>
-                                        <br></br>
-                                        <a href="#" onClick={this.traducir.bind(this,publicacion.textoPublicacion)}>
-                                        Traducir
-                                        </a>
-                                        <br></br>
-                                        <label>{publicacion.date}</label>
-                                    </li>
-                                ))}
+               
+                    <div className="container">
+                        <div className="row mt-5">
+                            {/* Lista de publicaciones*/}
+                            <div className="col-md-7 mx-auto">
+                                <div className="list-group-flush">
+                                    {this.state.publicacionesAmigos.map((publicacion, i) => ( 
+                                        <li className="list-group-item mb-2 rounded" key={i}>
+                                            <span className="pull-left">
+                                                <img src={publicacion.imagenUsuario} className=" avatar img-fluid rounded imagen mr-2" />
+                                            </span>
+                                            <b>{publicacion.usuario}</b>
+                                            <hr></hr>
+                                            <p>{publicacion.textoPublicacion}</p>  
+                                            <div className="center">
+                                                <img className='profile-image img-fluid' alt='icon' src={publicacion.imagenPublicacion}/>
+                                            </div>
+                                            <br></br>
+                                            <a href="#" onClick={this.traducir.bind(this,publicacion.textoPublicacion)}>
+                                            Traducir
+                                            </a>
+                                            <br></br>
+                                            <label>{publicacion.date}</label>
+                                        </li>
+                                    ))}
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
-            </div>
+            
         );
     }
 }

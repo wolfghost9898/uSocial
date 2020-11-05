@@ -11,6 +11,7 @@ import Auth from './services/Auth'
 import Solicitudes from './components/Solicitudes/Solicitudes'
 import Perfil from './components/Perfil/Perfil'
 import CrearPublicacion from './components/Publicacion/CrearPublicacion';
+import Usuarios from './components/Usuarios/Usuarios';
 
 class App extends Component {
 
@@ -60,7 +61,12 @@ class App extends Component {
               path="/crearPublicacion"
               component={CrearPublicacion} auth={this.auth.sesionIniciada()}
             />
-            
+
+            <GuardRoute
+              exact
+              path="/usuarios"
+              component={Usuarios} auth={this.auth.sesionIniciada()}
+            />
             
             
           </Switch>
