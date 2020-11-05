@@ -3,11 +3,10 @@ import ImageUploader from 'react-images-upload';
 import '../../../node_modules/bootstrap/dist/css/bootstrap.min.css';
 import './Style.css'
 import Auth from '../../services/Auth'
-import Bot from '../Chat/Bot'
 import { Link } from 'react-router-dom'
 import Swal from 'sweetalert2'
-import axios from 'axios'
 import { url } from '../../config'
+import axios from 'axios';
 
 class Inicio extends Component{
 
@@ -18,6 +17,7 @@ class Inicio extends Component{
         this.onDrop = this.onDrop.bind(this)  
         this.me = this.auth.obtenerInformacion()
         this.getPublicaciones = this.getPublicaciones.bind(this)   
+        this.traducir = this.traducir.bind(this)  
         this.state = {
             publicaciones: [],
             amigos: [],
@@ -95,12 +95,31 @@ class Inicio extends Component{
                     //console.log(this.state.publicacionesAmigos)
                     const reversed = this.state.publicacionesAmigos.reverse();
                     this.setState({ publicacionesAmigos: reversed })
-                    console.log(this.state.publicacionesAmigos)
+                    //console.log(this.state.publicacionesAmigos)
                 }
             })
             .catch(error => {
                 console.log(error)
             })
+        })
+        .catch(error => {
+            console.log(error)
+        })
+    }
+
+    traducir(textoPublicacion){
+        let texto = textoPublicacion;
+        //console.log(texto)
+        axios.get(url.api + 'api/publicacion/getTraduccion/'+ texto)
+        .then(response => {
+            let data = response.data
+            if (data.status === 200) {
+                //console.log(data.texto)
+                Swal.fire({
+                    title:'Traducción:',
+                    text: data.texto 
+                })
+            }
         })
         .catch(error => {
             console.log(error)
@@ -142,12 +161,15 @@ class Inicio extends Component{
                                             <img src={publicacion.imagenUsuario} className=" avatar img-fluid rounded imagen mr-2" />
                                         </span>
                                         <b>{publicacion.usuario}</b>
-                                       
                                         <hr></hr>
                                         <p>{publicacion.textoPublicacion}</p>  
                                         <div className="center">
                                             <img className='profile-image img-fluid' alt='icon' src={publicacion.imagenPublicacion}/>
                                         </div>
+                                        <br></br>
+                                        <a href="#" onClick={this.traducir.bind(this,publicacion.textoPublicacion)}>
+                                        Traducir
+                                        </a>
                                         <br></br>
                                         <label>{publicacion.date}</label>
                                     </li>

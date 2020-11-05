@@ -114,7 +114,7 @@ const register = async (req, res) => {
             ]
             let parametros = {
                 ClientId: config.clientId,
-                Password: contraseñaEncriptada,
+                Password: contra,
                 UserAttributes:userAttr,
                 SecretHash: generateHash(usuario,config.secretHash,config.clientId),
                 Username: usuario

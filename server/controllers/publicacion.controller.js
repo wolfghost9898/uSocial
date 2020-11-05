@@ -73,8 +73,51 @@ const getPublicaciones = async(req,res) =>{
     })
 }
 
+const getTraduccionPublicacion = async(req,res) =>{
+    let { texto } = req.params
+    //console.log(texto)
+    try{
+        
+        const translatedMsg = await getTranslation(texto)
+        return res.send({
+            status: 200,
+            texto: translatedMsg.TranslatedText,
+            message: "Traduccion correcta"
+        })
+
+    }catch (e) {
+        console.log(e);
+        return res.send({
+            status: 400,
+            msg : e
+        })
+    }
+}
+
+const getTranslation = async (msg) => {
+    const translateService = new AWS.Translate({
+        region: 'us-east-2',
+        accessKeyId: config.bucketID,
+        secretAccessKey: config.bucketPassword
+    })
+
+    const params = {
+        Text: msg,
+        SourceLanguageCode: "auto",
+        TargetLanguageCode: "es"
+    };
+
+    const tranlatedMsg = await translateService.translateText(params, (err, data) => {
+        //console.log(data)
+        return data;
+    }).promise()
+
+    return tranlatedMsg
+}
+
 
 module.exports = {
     addPublicacion,
-    getPublicaciones
+    getPublicaciones,
+    getTraduccionPublicacion
 }
