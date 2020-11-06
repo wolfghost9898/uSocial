@@ -99,6 +99,7 @@ const register = async (req, res) => {
                 msg : err
             })
         }
+
         newUser.save(err =>{
             if(err){
                 return res.send({

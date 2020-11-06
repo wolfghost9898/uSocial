@@ -1,5 +1,8 @@
 import React, { Component, useState } from 'react';
 import './App.css';
+
+
+
 import { BrowserRouter as Router, Route, Link, BrowserRouter, Redirect, Switch } from 'react-router-dom'
 
 import Login from './components/Login/Login'
@@ -12,7 +15,7 @@ import Solicitudes from './components/Solicitudes/Solicitudes'
 import Perfil from './components/Perfil/Perfil'
 import CrearPublicacion from './components/Publicacion/CrearPublicacion';
 import Usuarios from './components/Usuarios/Usuarios';
-
+import 'bootstrap/dist/css/bootstrap.min.css';
 class App extends Component {
 
 

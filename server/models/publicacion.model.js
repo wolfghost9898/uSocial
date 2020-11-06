@@ -5,6 +5,7 @@ var publicacionSchema = new Schema({
     usuario: String,
     texto: String,
     date: String,
+    etiqueta: String,
     imagen:String
 })
 

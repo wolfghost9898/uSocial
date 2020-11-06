@@ -3,7 +3,6 @@ import '../../../node_modules/bootstrap/dist/css/bootstrap.min.css';
 import './Style.css'
 import Auth from '../../services/Auth'
 import { Link } from 'react-router-dom'
-import Swal from 'sweetalert2'
 import { url } from '../../config'
 import axios from 'axios';
 
@@ -33,7 +32,6 @@ class Usuarios extends Component{
 
     getUsuarios(){
         let usuario = this.me
-        this.state.usuariosNoAmigos = []
         axios.get(url.api + 'api/auth/getUsuarios')
         .then(response => {
             let data = response.data
@@ -58,7 +56,7 @@ class Usuarios extends Component{
                             }
                         }
                         if(!estado){
-                            if(this.state.usuarios[i].usuario != usuario.usuario){
+                            if(this.state.usuarios[i].usuario !== usuario.usuario){
                                 let item = this.state.usuariosNoAmigos
                                 item = item.concat(this.state.usuarios[i])
                                 this.setState({ usuariosNoAmigos: item })
