@@ -1,0 +1,29 @@
+version: '3.7'
+services:
+
+  server:
+    container_name: server
+    image: server
+    build:
+        dockerfile: Dockerfile
+        context: ./server
+    ports:
+      - '5000:5000'
+    networks:
+      - proxynet
+  
+  client:
+    container_name: client
+    image: client
+    build:
+        dockerfile: Dockerfile
+        context: ./client
+    ports:
+      - '80:3000'
+    networks:
+      - proxynet
+
+networks:
+  proxynet:
+    name: custom_network
+
