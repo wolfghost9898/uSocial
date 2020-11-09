@@ -1,5 +1,5 @@
 
 
 export const url = {
-    api : "http://localhost:5000/"
+    api : "http://3.133.132.137:5000/"
 }

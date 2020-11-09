@@ -11,9 +11,6 @@ services:
     ports:
       - '80:3000'
     stdin_open: true 
-    networks: 
-            app-net:
-                ipv4_address: 172.19.0.2
 
 
   server:
@@ -24,16 +21,6 @@ services:
         context: ./server
     ports:
       - '5000:5000'
-    networks: 
-            app-net:
-                ipv4_address: 172.19.0.3
   
-  
-networks:
-    app-net:
-        ipam:
-            driver: default
-            config:
-            - subnet: "172.19.0.0/24" 
 
 

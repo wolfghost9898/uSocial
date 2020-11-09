@@ -22,7 +22,7 @@ const host = process.env.HOST || 'localhost';
 const db = process.env.DB || 'proyecto';
 const puerto = process.env.PORTdb || 27017;
 
-const dbConnectionUrl = `mongodb://${host}:${puerto}/${db}`;
+const dbConnectionUrl = `mongodb://10.0.0.251:${puerto}/${db}`;
 
 app.use('/api/auth', require('./routes/auth.route'))
 app.use('/api/amigo',require('./routes/amigos.route'))
