@@ -1,0 +1,30 @@
+body {
+  font-family: 'Courier New', Courier, monospace;
+  background: rgb(20, 21, 24);
+  background: linear-gradient(
+    90deg,
+    rgba(20, 21, 24, 1) 1%,
+    rgba(158, 93, 201, 1) 88%
+  );
+}
+
+.form-wrapper {
+  background: #fff;
+  border-radius: 5px;
+  padding: 50px;
+}
+
+.form-control {
+  border-radius: 0px;
+  color: #495057;
+  background-color: #f1f1f1;
+  border-color: none;
+}
+
+.form-control:focus {
+  color: #495057;
+  background-color: #ffffff;
+  border: 1px solid #b5b6b3;
+  outline: 0;
+  box-shadow: none;
+}

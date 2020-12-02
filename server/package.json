@@ -1,0 +1,26 @@
+{
+  "name": "server",
+  "version": "1.0.0",
+  "description": "Servidor Proyecto 2 Seminarioi",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node index.js",
+    "dev": "nodemon index.js"
+  },
+  "author": "Carlos Hernandez",
+  "license": "ISC",
+  "dependencies": {
+    "aws-sdk": "^2.773.0",
+    "bcryptjs": "^2.4.3",
+    "body-parser": "^1.19.0",
+    "cors": "^2.8.5",
+    "crypto": "^1.0.1",
+    "dotenv": "^8.2.0",
+    "express": "^4.17.1",
+    "mongoose": "^5.10.9",
+    "morgan": "^1.10.0",
+    "node-datetime": "^2.1.2",
+    "socket.io": "^2.3.0"
+  }
+}
